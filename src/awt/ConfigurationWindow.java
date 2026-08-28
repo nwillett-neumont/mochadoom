@@ -20,7 +20,7 @@ public class ConfigurationWindow extends JFrame {
     private JLabel title;
     private JCheckBox autorunCheckbox;
     private JButton submit;
-    private File configFile = new File("./mochadoom.cfg");
+    private final File configFile = new File("./mochadoom.cfg");
     private boolean autorunEnabled = false;
 
     public ConfigurationWindow(Runnable runGame) {
@@ -75,6 +75,9 @@ public class ConfigurationWindow extends JFrame {
     void launch() {
         setVisible(false);
         dispose();
+
+        setSetting("alwaysrun", autorunEnabled, configFile);
+        System.out.println(getSetting("alwaysrun", configFile));
     }
 
     public String getSetting(String setting, File configFile) {
@@ -102,7 +105,7 @@ public class ConfigurationWindow extends JFrame {
         return Boolean.parseBoolean(found);
     }
 
-    public <T> void setSetting(String setting, T value) {
+    public <T> void setSetting(String setting, T value, File configFile) {
         Path configFilePath = configFile.toPath();
 
         if (Files.exists(configFilePath)) {
