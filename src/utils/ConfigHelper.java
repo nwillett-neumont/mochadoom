@@ -1,5 +1,7 @@
 package utils;
 
+import defines.DoomVersion;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,19 +11,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ConfigHelper {
     private final File configFile = new File("./mochadoom.cfg");
+    private final Set<String> validGames = Arrays.stream(DoomVersion.values()).map(value -> value.name()).collect(Collectors.toSet());
     private boolean autorunEnabled = false;
     private HashMap<String, String> gameFiles = new HashMap<>();
 
     public ConfigHelper() {
         autorunEnabled = getSettingToBoolean("alwaysrun");
+        gameFiles = readGameDir(null);
     }
 
     public String getSetting(String setting) {
@@ -81,23 +83,38 @@ public class ConfigHelper {
         }
     }
 
-    public HashMap<String, String> readGameDir() throws IOException {
-        String directory = getSetting("gamesdir");
+    public HashMap<String, String> readGameDir(String directory) {
+        if (directory == null) directory = getSetting("gamesdir");
+        Path dir = Paths.get(directory);
         Set<String> files;
         HashMap<String, String> games = new HashMap<>();
 
-        try (Stream<Path> stream = Files.list(Paths.get(directory))) {
+        try (Stream<Path> stream = Files.list(dir)) {
+            List<String> subDirs = stream.filter(Files::isDirectory).map(Path::toString).collect(Collectors.toList());
+            for (String path : subDirs) {
+                HashMap<String, String> subGames = readGameDir(path);
+                games.putAll(subGames);
+            }
+        } catch (IOException x) {
+            System.err.format("IOException: %s%n", x);
+        }
+
+        try (Stream<Path> stream = Files.list(dir)) {
+
             files = stream.filter(file -> !Files.isDirectory(file))
-                    .map(Path::getFileName)
+                    .filter(file -> {
+                        return validGames.contains(file.getFileName().toString().replace('.', '_').toUpperCase());
+                    })
                     .map(Path::toString)
                     .collect(Collectors.toSet());
-        }
 
-        for (String file : files) {
-            String[] pathArray = file.split("/");
-            games.put(pathArray[pathArray.length - 1], file);
+            for (String file : files) {
+                int start = file.lastIndexOf(File.separatorChar) + 1;
+                games.put(file.substring(start), file);
+            }
+        } catch (IOException x) {
+            System.err.format("IOException: %s%n", x);
         }
-
         return games;
     }
 
