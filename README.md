@@ -18,7 +18,9 @@ The last game played is persisted as the `lastgame` item in `mochadoom.cfg`.
 2. Place valid game `.wad` files in the games directory. (Freedoom works for this and can be found at https://freedoom.github.io/download.html download the phase1+2 zip and place the files ending in `.wad` in the games folder)
 3. Open the src directory in IntelliJ IDEA
 4. Change the project SDK if necessary
-5. Run the Engine option
+5. Add a new Application Run Configuration called Engine and set the main class to mochadoom.Engine
+6. MAKE ABSOLUTELY SURE THE PROJECT IS USING JAVA 11
+7. Run the Engine Configuration
 
 ~~1. Open the project with Eclipse or NetBeans~~
 ~~2. Delete every file that has errors (if any)~~
