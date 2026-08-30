@@ -17,6 +17,7 @@
 
 package mochadoom;
 
+import awt.ConfigurationWindow;
 import awt.DoomWindow;
 import awt.DoomWindowController;
 import awt.EventBase.KeyStateInterest;
