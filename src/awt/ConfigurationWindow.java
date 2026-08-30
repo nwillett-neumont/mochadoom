@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 
 public class ConfigurationWindow extends JFrame {
+    private JPanel top;
     private JPanel mainWindow;
+    private JPanel bottom;
     private JLabel title;
     private JCheckBox autorunCheckbox;
     private JButton submit;
@@ -47,7 +49,10 @@ public class ConfigurationWindow extends JFrame {
     }
 
     void initComponents() {
+        top = new JPanel();
         mainWindow = new JPanel();
+        bottom = new JPanel();
+
         title = new JLabel("Mochaconfig");
         autorunCheckbox = new JCheckBox("Enable autorun");
         submit = new JButton("Launch");
@@ -58,16 +63,32 @@ public class ConfigurationWindow extends JFrame {
     }
 
     void addComponents() {
-        mainWindow.add(title);
+        top.add(title);
+
         mainWindow.add(autorunCheckbox);
-        mainWindow.add(submit);
-        add(mainWindow);
+
+        bottom.add(submit);
+
+        this.add(top);
+        this.add(mainWindow);
+        this.add(bottom);
     }
 
     void setValues() {
         this.setSize(600, 800);
+        this.setMinimumSize(new Dimension(200, 300));
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        top.setPreferredSize(new Dimension(600, 60));
+        mainWindow.setPreferredSize(new Dimension(600, 640));
+        bottom.setPreferredSize(new Dimension(600, 100));
+
+        this.getContentPane().add(BorderLayout.NORTH, top);
+        this.getContentPane().add(BorderLayout.CENTER, mainWindow);
+        this.getContentPane().add(BorderLayout.SOUTH, bottom);
+
+        title.setFont(title.getFont().deriveFont(Font.PLAIN, 32));
 
         autorunCheckbox.setSelected(autorunEnabled);
     }
