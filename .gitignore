@@ -43,3 +43,5 @@ hs_err_pid*
 # Runtime Junk
 *.cfg
 *.dat
+
+!./mochadoom.cfg

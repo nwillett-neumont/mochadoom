@@ -6,11 +6,23 @@
 
 Mocha Doom is a pure Java Doom source port. Most of the hard work of porting Doom to Java has already been done, thanks to Velktron (Maes), but he has stopped working on it in 2013. Although the port is almost complete, some work remains to do, most importantly the network code for the multiplayer is missing. Features like support for the Boom format would also be great. I have decided to continue the development in my free time and fix some bugs.
 
+# PRO250 Modifications
+
+This fork of the project adds a simple configuration window before the engine launches, that allows the user to select a game and toggle autorun.
+The games are read from what ever folder is specified in the `gamesdir` item in `mochadoom.cfg`.
+The last game played is persisted as the `lastgame` item in `mochadoom.cfg`.
+
 # How to run
 
-1. Open the project with Eclipse or NetBeans
-2. Delete every file that has errors (if any)
-3. Build and run the project
+1. Make sure you have a valid install of Java 11
+2. Place valid game `.wad` files in the games directory. (Freedoom works for this and can be found at https://freedoom.github.io/download.html download the phase1+2 zip and place the files ending in `.wad` in the games folder)
+3. Open the src directory in IntelliJ IDEA
+4. Change the project SDK if necessary
+5. Run the Engine option
+
+~~1. Open the project with Eclipse or NetBeans~~
+~~2. Delete every file that has errors (if any)~~
+~~3. Build and run the project~~
 
 ## Advanced users
 
