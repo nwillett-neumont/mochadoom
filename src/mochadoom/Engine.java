@@ -17,7 +17,6 @@
 
 package mochadoom;
 
-import awt.ConfigurationWindow;
 import awt.DoomWindow;
 import awt.DoomWindowController;
 import awt.EventBase.KeyStateInterest;
@@ -29,8 +28,6 @@ import doom.ConfigManager;
 import doom.DoomMain;
 import static g.Signals.ScanCode.*;
 import i.Strings;
-
-import javax.swing.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -42,65 +39,48 @@ public class Engine {
     /**
      * Mocha Doom engine entry point
      */
-    public static void main(final String[] argv) {
-        /* Injection Point */
-        ConfigurationWindow configurationWindow = new ConfigurationWindow(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    runEngine(argv);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-            }
-        });
-    }
-
-    public static void runEngine(final String[] argv) throws IOException {
+    public static void main(final String[] argv) throws IOException {
         final Engine local;
-
         synchronized (Engine.class) {
             local = new Engine(argv);
         }
-
+        
         /**
          * Add eventHandler listeners to JFrame and its Canvas elememt
          */
-        /*content.addKeyListener(listener);
+        /*content.addKeyListener(listener);        
         content.addMouseListener(listener);
         content.addMouseMotionListener(listener);
         frame.addComponentListener(listener);
         frame.addWindowFocusListener(listener);
         frame.addWindowListener(listener);*/
         // never returns
-
         try {
             local.DOOM.setupLoop();
         } catch(Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
-    }
-
+    }  
+    
     public final CVarManager cvm;
     public final ConfigManager cm;
     public final DoomWindowController<?, EventHandler> windowController;
     private final DoomMain<?, ?> DOOM;
-
+    
     @SuppressWarnings("unchecked")
     private Engine(final String... argv) throws IOException {
         instance = this;
-
+        
         // reads command line arguments
         this.cvm = new CVarManager(Arrays.asList(argv));
-
+        
         // reads default.cfg and mochadoom.cfg
         this.cm = new ConfigManager();
-
+        
         // intiializes stuff
         this.DOOM = new DoomMain<>();
-
+        
         // opens a window
         this.windowController = /*cvm.bool(CommandVariable.AWTFRAME)
             ? */DoomWindow.createCanvasWindowController(
@@ -114,7 +94,7 @@ public class Engine {
                 DOOM.graphicSystem.getScreenWidth(),
                 DOOM.graphicSystem.getScreenHeight()
             )*/;
-
+        
         windowController.getObserver().addInterest(
             new KeyStateInterest<>(obs -> {
                 EventHandler.fullscreenChanges(windowController.getObserver(), windowController.switchFullscreen());
@@ -136,7 +116,7 @@ public class Engine {
                 if (!windowController.isFullscreen() && !DOOM.mousecaptured && DOOM.menuactive) {
                     EventHandler.menuCaptureChanges(obs, DOOM.mousecaptured = true);
                 }
-
+                
                 return WANTS_MORE_PASS;
             }, SC_ESCAPE)
         ).addInterest(
@@ -148,14 +128,14 @@ public class Engine {
             }, SC_PAUSE)
         );
     }
-
+    
     /**
      * Temporary solution. Will be later moved in more detalied place
      */
     public static void updateFrame() {
         instance.windowController.updateFrame();
     }
-
+        
     public String getWindowTitle(double frames) {
         if (cvm.bool(CommandVariable.SHOWFPS)) {
             return String.format("%s - %s FPS: %.2f", Strings.MOCHA_DOOM_TITLE, DOOM.bppMode, frames);
@@ -179,7 +159,7 @@ public class Engine {
                 }
             }
         }
-
+        
         return local;
     }
     
