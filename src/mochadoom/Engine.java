@@ -28,6 +28,9 @@ import doom.ConfigManager;
 import doom.DoomMain;
 import static g.Signals.ScanCode.*;
 import i.Strings;
+import utils.ConfigHelper;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -39,7 +42,28 @@ public class Engine {
     /**
      * Mocha Doom engine entry point
      */
-    public static void main(final String[] argv) throws IOException {
+    public static void main(final String[] argv) {
+        /* Injection Point */
+        ConfigurationWindow configurationWindow = new ConfigurationWindow(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String[] prependedGame = new String[argv.length + 2];
+                    if (ConfigHelper.getGameCommandVariable() != null && !ConfigHelper.getGameCommandVariable().isEmpty()) {
+                        prependedGame[0] = ConfigHelper.getGameCommandVariable().split(" ")[0];
+                        prependedGame[1] = ConfigHelper.getGameCommandVariable().split(" ")[1];
+                        System.arraycopy(argv, 0, prependedGame, 2, argv.length);
+                    }
+                    runEngine(prependedGame);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+        });
+    }
+
+    public static void runEngine(final String[] argv) throws IOException {
         final Engine local;
         synchronized (Engine.class) {
             local = new Engine(argv);
