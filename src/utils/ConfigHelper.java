@@ -18,12 +18,18 @@ import java.util.stream.Stream;
 public class ConfigHelper {
     private final File configFile = new File("./mochadoom.cfg");
     private final Set<String> validGames = Arrays.stream(DoomVersion.values()).map(value -> value.name()).collect(Collectors.toSet());
-    private boolean autorunEnabled = false;
     private HashMap<String, String> gameFiles = new HashMap<>();
+    private String selectedGame = "";
+    private boolean autorunEnabled = false;
+
+    private static String gameCommandVariable = "";
 
     public ConfigHelper() {
         autorunEnabled = getSettingToBoolean("alwaysrun");
         gameFiles = readGameDir(null);
+        String lastGame = getSetting("lastgame");
+        if (lastGame != null && !lastGame.isBlank()) selectedGame = lastGame;
+        else if (!gameFiles.isEmpty()) selectedGame = gameFiles.keySet().toArray()[0].toString();
     }
 
     public String getSetting(String setting) {
@@ -85,6 +91,7 @@ public class ConfigHelper {
 
     public HashMap<String, String> readGameDir(String directory) {
         if (directory == null) directory = getSetting("gamesdir");
+        if (directory == null) directory = ".";
         Path dir = Paths.get(directory);
         Set<String> files;
         HashMap<String, String> games = new HashMap<>();
@@ -136,5 +143,21 @@ public class ConfigHelper {
 
     public void setGameFiles(HashMap<String, String> gameFiles) {
         this.gameFiles = gameFiles;
+    }
+
+    public String getSelectedGame() {
+        return selectedGame;
+    }
+
+    public void setSelectedGame(String selectedGame) {
+        this.selectedGame = selectedGame;
+    }
+
+    public static String getGameCommandVariable() {
+        return gameCommandVariable;
+    }
+
+    public static void setGameCommandVariable(String gameCommandVariable) {
+        ConfigHelper.gameCommandVariable = gameCommandVariable;
     }
 }
